@@ -1,0 +1,1377 @@
+<!doctype html>
+<html>
+<head>
+<title>Z E D I N V A D E R S - v. 1.0</title>
+       
+<!--fogli di stile-->
+<link rel="stylesheet" href="css/zedstyle.css"/>
+<link rel="stylesheet" href="lib/jquery-ui.css"/>
+
+<!--jquery -->
+<script src="lib/jquery.min.js"></script>
+<script src="lib/jquery-ui.min.js"></script>
+
+<!--keyboard-->
+<script src="lib/hotkeys/jquery.hotkeys-0.7.9.min.js"></script>
+
+<!--particles-->
+<script src="lib/script/explosion.js" ></script>
+
+<!--loading bar-->
+<script type="text/javascript" src="lib/script/pbar.js"></script>  
+  
+<!--bootstrap-->
+<link rel="stylesheet" href="lib/bootstrap.min.css">
+<link rel="stylesheet" href="lib/bootstrap-theme.min.css">
+<script src="lib/bootstrap.min.js"></script>
+  
+<!--audio--> 
+<script src="lib/audiojs/audio.min.js"></script>  
+<script>
+      audiojs.events.ready(function() {
+        audiojs.createAll();
+      });
+</script>
+    
+<meta name="viewport" content="width=900px, user-scalable=no">  
+    
+</head>
+<body>
+
+<div class="share_box">
+	<span id="close_box">&#10006;</span>
+	
+	<!--social sharing-->
+	<h3>Condividi!</h3>
+	
+	<!-- Place this tag where you want the +1 button to render. -->
+	<div class="g-plusone"></div>
+	
+	<!-- Place this tag after the last +1 button tag. -->
+	<script type="text/javascript">
+	  window.___gcfg = {lang: 'it'};
+	
+	  (function() {
+	    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+	    po.src = 'https://apis.google.com/js/platform.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+	  })();
+	</script>
+
+	<!--facebook-->
+	<iframe src="//www.facebook.com/plugins/like.php?href=http%3A%2F%2Fzedfumetto.it%2Fzedinvaders%2Fgame.html&amp;width=300px&amp;layout=box_count&amp;action=like&amp;show_faces=true&amp;share=true&amp;height=65&amp;appId=828203727194705" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:300pxpx; height:65px;" allowTransparency="true"></iframe>
+	
+	<!--twitter-->
+	<a href="https://twitter.com/share" class="twitter-share-button">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+
+	<a href="http://zedfumetto.it" title="Visita zedfumetto.it">
+	<img src="https://lh3.googleusercontent.com/-CFdNvrfsfG0/UbtY9-7LgeI/AAAAAAAAABI/19MulnprsJE/w251-h250/74055_138348346319131_629271759_n.jpg"
+	style="width: 30px;"/>
+	</a>
+
+	<button id="istruzioni">TASTI</button>
+
+	Aiuta Jack a caricare la barra al 100% 
+    usando la cyclette sulla sinistra, 
+	e prima che gli invaders la infettino!
+	
+	<button type="button" class="btn btn-default btn-lg" id="restart">
+				RESTART<span class="glyphicon icon-star"></span></button>
+		
+	<button type="button" class="btn btn-default btn-lg" id="mute">
+				MUTE</button>
+				
+	<h1>SCORE: <span id="points">0</span></h1>
+</div>
+
+
+
+<div id="bigcontainer">	
+		
+	<div id="loading" class="modal">
+		<h1>
+			<img src="http://i.stack.imgur.com/FhHRx.gif" /> 
+			Attendere...
+		</h1>
+	</div>
+		
+	<div class="row">
+		<div class="col-md-12">
+		
+<script src="http://connect.soundcloud.com/sdk.js"></script>
+<script>    
+
+SC.stream('/tracks/137934433', {
+  autoPlay: true,
+  //onfinish: playAgain,
+  ontimedcomments: function(comments){
+    console.log(comments[0].body);
+  }
+},
+	function(sound) {
+	  $('#mute').click(function(e) {
+	    e.preventDefault();
+	    
+	    if (muted){
+		    sound.start();
+		    $("button#mute").html("MUTE");
+	    	muted=false;
+	    }
+	    else{
+	    	sound.stop();
+		    $("button#mute").html("MUSIC");
+	    	muted=true;
+	    }
+	  });
+	}	
+);
+
+	function playAgain(){
+	//^^^^^^????????
+	}
+
+
+$('#istruzioni').click(function(){
+	alert("Tasti: FRECCIA SIN. , FRECCIA DESTRA , FUOCO / CYCLETTE : Z");
+});
+
+
+$( "span#close_box" ).click(function() {
+	$('div.share_box').fadeOut( 1000, function() {
+		$('div.share_box').remove();
+	});
+});
+
+      
+</script>			
+	</div>
+
+    <div id="container">		
+		<canvas id="canvas" style="border:3px solid #000;"></canvas>
+		<div id="contenitore" style=" padding: 5px;background-image: url('sprites/pavimento.png'); margin-top:-5px;width: 905px;height: 126px;">
+			<div id="progressbar" style="">
+				<div class="progress-label">
+					Caricamento...
+				</div>
+			</div>
+		</div>
+	
+	<code id="info" style="background-color: black; color:white; text-align: center;">-</code>
+	<code id="screen" style="background-color: black; color:white; text-align: center;">-</code>
+	<div id="console"></div>
+
+	</div>
+
+</div><!-- bigcontainer -->
+
+<script type="text/javascript">
+
+var paused = false;
+
+/**pre loading**/
+$("#loading").ajaxStart(function(){	
+    $(this).show();
+ }).ajaxStop(function(){
+ 	alert("fine");
+    $(this).hide();
+ });
+
+var stop;
+var vivo;
+
+/*gestione esplosioni**/
+var fr = 50.0;
+var xyz = 1000.0;
+var frameRate = fr;
+var frameDelay = xyz / frameRate;
+		
+setInterval( function(){
+	updateExplosion( getCtx(), frameDelay);
+}, frameDelay );
+
+/////////////////////////////////////////////////////START/////////////////////////////////////
+document.body.addEventListener("keydown", function(e) {
+    keys[e.keyCode] = true;
+});
+ 
+document.body.addEventListener("keyup", function(e) {
+    keys[e.keyCode] = false;
+});
+ 
+//main init
+window.addEventListener("load", function(){
+    var version = new Date().getTime();
+    version = Math.round( version/100000000000,2 );
+    
+    $("p span").text( version + "b" );
+    
+    var msg = "tile = ( "+tilew+" x "+tileh+" px ) "+", screen size : width = "+width1+"px, height = "+height1+"px" ;
+    $('#screen').text( msg );
+
+    playerControl( );
+    invadersControl( );
+    updateExplosion( frameDelay );    
+});
+
+//controlli
+$('#restart').click( function(){
+	window.location.reload();
+} );
+
+var muted=false;
+
+/////////////////////////////////////////////////////////////////
+
+var shots = new Array;
+var aliens = new Array;
+var flag= false;
+var max; 						//??
+
+var tilew=90, tileh=126;		//nuovi dimensioni tile
+//var tilew=125, tileh=175;		//vecchie dimensioni tile
+var tilex=10, tiley=8; 			//10 x 8 original
+var width1 = tilew * tilex;		//width schermo
+var height1 = tileh * tiley;	//height schermo
+
+var velocitaX = 8;
+
+var kk = 0; //current frame of the machine
+var rotating = false;
+
+var lunghezzaFrusta = 2*tileh;
+
+  var invadera1 = new Image();
+  var invadera2 = new Image();
+  var invaderb1 = new Image();
+  var invaderb2 = new Image();
+  var invaderc1 = new Image();
+  var invaderc2 = new Image();
+  var gameover = new Image();
+  var vaiadormire = new Image();
+  var soffitto = new Image();
+  var cyclette = new Image();
+  
+var sinistro1 = new Image();
+var sinistro2 = new Image();
+var sinistro3 = new Image();
+var sinistro4 = new Image();
+var destro1 = new Image();
+var destro2 = new Image();
+var destro3 = new Image();
+var destro4 = new Image();
+
+  var invader;
+
+  var jack_static_l = new Image();
+  var jack_static_r = new Image();
+
+	//fotogrammi cyclette
+  var jack_wl = new Array(4);
+  
+  var jack_walkL = new Array(2);  
+  var jack_walkR = new Array(2);  
+  var jack_fireL = new Image();
+  var jack_fireR = new Image();
+  
+var latest = jack_static_l; //default init
+var canvas = document.getElementById("canvas"),
+    ctx = canvas.getContext("2d"),
+    width = width1,
+    height = height1,
+    player = {
+      x : width/2, 
+      y : height,
+      width : tilew,
+      height : tileh,
+      speed: 3,
+      velX: 0,
+      velY: 0,
+      jumping: false
+    },
+    keys = [],
+    friction = 0.8 / 2,
+    gravity = 0.2;
+ 
+	canvas.width = width;	
+	canvas.height = height;
+		
+/////////////////////////////////////////////////////////////////
+var k=0;
+
+//invader size
+var invaderW = 50;
+var invaderH = 50;
+
+//limits
+var top_limit = invaderH;
+var right_limit = width1 - 4*tilew - invaderW;
+var bottom_limit = height1 - invaderH;
+var left_limit = 2*tilew + invaderW;
+
+//single invader
+//var curr_x =Math.floor( (Math.random()*right_limit) + left_limit );
+//var curr_y =height/10;
+
+//multiple invaders
+var curx;
+var cury;
+var invaders_type;
+var quantiInvader;
+var vel_x;
+var flag = true;
+
+function baloonDraw( msg ) {
+	return; //non funziona
+	
+    var ctx = getCtx();
+
+    var stx=width1-tilew; 	//75
+    var sty=height1-tileh; 	//25
+
+    ctx.beginPath();
+
+     //horizontal 1
+    ctx.moveTo( 150, 150 );    
+    ctx.lineTo( 170, 170 );
+    ctx.lineTo( 190, 150 );
+    ctx.lineTo( 210, 160 );
+    ctx.lineTo( 230, 150 );
+    ctx.lineTo( 250, 175 );
+    ctx.lineTo( 270, 150 );
+    ctx.lineTo( 290, 170 );
+    
+    //vertical 1
+    ctx.moveTo( 270, 170 ); 
+    ctx.moveTo( 290, 150 ); 
+    
+    //horizontal 2
+    ctx.moveTo( 150, 250 );    
+    ctx.lineTo( 170, 270 );
+    ctx.lineTo( 190, 250 );
+    ctx.lineTo( 210, 260 );
+    ctx.lineTo( 230, 250 );
+    ctx.lineTo( 250, 275 );
+    ctx.lineTo( 270, 250 );
+    ctx.lineTo( 290, 270 );
+
+	ctx.fillText( msg, 200, 200);
+
+    ctx.stroke();
+}
+
+var boom = new Array();
+var gameaudio;
+var beep;
+var beep2;
+var youwon;
+
+var bip1;
+var bip2;
+var bip3;
+var bip4;
+var bip5;
+
+var semprePiuInvaders=2;
+var limiteInvaders=5;
+
+function preAllocateInvadersStartPos( number ){
+    var number = (semprePiuInvaders++) + Math.floor( Math.random()*4 );
+
+	if (number>=limiteInvaders)
+		number = limiteInvaders;
+	 
+	quantiInvader = number;
+	acc =0.1;
+	
+	//coordinate e tipo invaders
+	curx = Array( quantiInvader );
+	cury = Array( quantiInvader );
+	invaders_type = Array( quantiInvader );
+	
+	//doppio array di flag
+	stop = Array( quantiInvader );
+	vivo = Array( quantiInvader );
+	var random;
+	
+	for ( var k=0; k<quantiInvader; k++ ){
+		stop[k] = false;
+		vivo[k] = true;
+		curx[k] = randomX2( k+1 );
+
+		//adjust x,y, evita di ammassarli
+		if (k>0){
+			
+			//elementi adiacenti da distanziare
+			for ( var kk=0; kk<k; kk++ ){
+				for ( var gg=1; gg<kk; gg++ ){
+					if ( curx[kk-gg]- curx[kk] <= tilew ){
+						curx[kk]= curx[kk]+ tilew;
+	
+						//normalize
+						curx[kk] = curx[kk]%(width1-2.3*tilew);
+						if ( curx[kk]< 2*tilew ) curx[kk]=2*tilew;
+					}
+	
+					if ( cury[kk-gg]- cury[kk] <= tileh ){
+						cury[kk]= cury[kk]+ 0.15*tileh;
+	
+						//normalize
+						cury[kk] = cury[kk]%(height1-2*tileh);
+						if ( cury[kk]< 2*tileh ) cury[kk]=2*tileh;
+					}	
+				}			
+			}
+		}
+		
+		//normalize x
+		curx[k] = curx[k]%(width1-2*tilew);
+		if ( curx[k]< 2*tilew ) curx[k]=2*tilew;
+
+		//normalize y
+		cury[k] = tileh/2 + randomY();
+		cury[k] = cury[k]%(height1-tileh);
+		
+		random = Math.floor( Math.random()*100 );
+		
+		if ( random%k==0 ) 
+			invaders_type[k] = invadera1;
+		else if ( random%2*k==0 )
+			invaders_type[k] =  invaderb1;
+		else
+			invaders_type[k] =  invaderc1;
+	}
+	
+}
+
+var soffitto_x = 0, soffitto_y=0;
+var soffitto_width = width1, soffitto_height=tileh;
+
+var sinistro_x = 0, sinistro_y=tileh;
+var destro_x = width1-2*tilew, 	destro_y=tileh;
+var colonna_width = 2*tilew, colonna_height=height1-tileh;
+
+function disegnaFondale(){
+	
+  var ctx = getCtx();
+    	
+  ctx.fillStyle = "black";
+  ctx.clearRect( soffitto_x, soffitto_y, width, height );
+
+  //soffritto
+  ctx.fillRect( soffitto_x, soffitto_y, soffitto_width, soffitto_height);
+  
+  //colonna sx
+  ctx.fillRect( sinistro_x, sinistro_y, colonna_width, colonna_height);
+
+  //colonna dx
+  ctx.fillRect( destro_x, destro_y, colonna_width, colonna_height);
+  
+  //fondo nero
+  ctx.fillRect( 0, 0, width1, height1);
+  
+  ctx.drawImage( sinistro1, sinistro_x, sinistro_y );
+  ctx.drawImage( destro1, destro_x, destro_y );
+  ctx.drawImage( soffitto, soffitto_x, soffitto_y );
+  
+  //disegna cyclette
+  //ctx.drawImage( cyclette, tilew-40, 6*tileh+0.60*tileh );
+
+  ctx.drawImage( cyclette, 0, 7*tileh );
+}
+
+var soundtrack;
+var sinistrodef;
+var destrodef;
+
+(function() { //onloading	
+				
+	SC.initialize({
+	  client_id: 'a6075ec4ef3368a42c0b597f4002f127'
+	});
+		
+//sound effects
+	boom.push( new Audio("lib/audiojs/boom1.wav") );
+	boom.push( new Audio("lib/audiojs/boom2.wav") );
+	boom.push( new Audio("lib/audiojs/boom3.wav") );
+	boom.push( new Audio("lib/audiojs/boom4.wav") );
+	
+	gameaudio 	= new Audio("audio/game-over.wav");
+	youwon 		= new Audio("audio/pacman_intermission.wav");
+
+	bip4 	= new Audio("audio/pacman_eatghost.wav");
+	//beep 		= new Audio("lib/audiojs/beep.wav");
+	//beep2 		= new Audio("lib/audiojs/beep2.wav");
+	//bip1 	= new Audio("audio/pacman_chomp.wav");
+	//bip2 	= new Audio("audio/pacman_death.wav");
+	//bip3 	= new Audio("audio/pacman_eatfruit.wav");
+	//bip5 	= new Audio("audio/pacman_extrapac.wav");	
+	//soundtrack 	= new Audio("audio/soundtrack.wav");
+	
+	//volumi
+//	gameaudio.volume= 0.5;
+//	youwon.volume= 0.5;
+	bip4.volume= 0.5;
+	boom[0].volume = 0.5;
+	boom[1].volume = 0.5;
+	boom[2].volume = 0.5;
+	boom[3].volume = 0.5;
+	
+	
+	//bip1 	= new Audio("audio/pacman_intermission.wav");
+
+// soffitto
+  soffitto.src = 'sprites/soffitto.jpg'; 
+  
+// culonne
+sinistro1.src = 'sprites/sinistro1.jpg';   	
+sinistro2.src = 'sprites/sinistro2.jpg'; 
+sinistro3.src = 'sprites/sinistro3.jpg'; 
+sinistro4.src = 'sprites/sinistro4.jpg'; 
+
+sinistrodef = sinistro1;
+destrodef = destro1;
+
+destro1.src = 'sprites/destro4.jpg'; 
+//destro2.src = 'sprites/destro2.jpg'; 
+//destro3.src = 'sprites/destro3.jpg'; 
+//destro4.src = 'sprites/destro4.jpg'; 
+	
+//invader 1
+  invadera1.src = 'sprites/invader_a1.png'; 
+  invadera2.src = 'sprites/invader_a2.png'; 
+  
+//invader 2
+  invaderb1.src = 'sprites/invader_b1.png'; 
+  invaderb2.src = 'sprites/invader_b2.png'; 
+  
+//invader 3
+  invaderc1.src = 'sprites/invader_c1.png'; 
+  invaderc2.src = 'sprites/invader_c2.png'; 
+
+  jack_static_l.src = 'sprites/jack_static_l.png'; 
+  jack_static_r.src = 'sprites/jack_static_r.png'; 
+  
+  jack_walkL[0] = new Image();
+  jack_walkL[0].src = 'sprites/jack_walkL1.png';
+
+  jack_walkR[0] = new Image();
+  jack_walkR[0].src = 'sprites/jack_walkR1.png';
+
+  jack_walkL[1] = new Image();
+  jack_walkL[1].src = 'sprites/jack_walkL2.png';
+
+  jack_walkR[1] = new Image();
+  jack_walkR[1].src = 'sprites/jack_walkR2.png';
+     
+  jack_fireL.src = 'sprites/jack_fireL.png'; 
+  jack_fireR.src = 'sprites/jack_fireR.png'; 
+  
+  cyclette.src= 'sprites/cyclette.png';
+  cyclette.style.width="125px";
+  cyclette.style.width="175px";
+  
+//game over  
+  gameover.src = 'web/images/game_over.gif'; 
+  
+//vai a dormire
+  vaiadormire.src = 'sprites/vai_a_dormire.jpg'; 
+
+  for ( var j=0; j<=3; j++ )
+  {
+//  	jack_wr[j]			    = new Image();
+//  	jack_wr[j].src 			= 'sprites/jack_w'+j+'.png'; 
+//    jack_wr[j].style.width 	= ''+tilew+' px';
+//  	jack_wr[j].style.height = ''+tileh+' px';
+
+  	jack_wl[j]			    = new Image();
+  	jack_wl[j].src 			= 'sprites/jackl_w'+(j+1)+'.png'; 
+    jack_wl[j].style.width 	= ''+2*tilew+' px';
+  	jack_wl[j].style.height = ''+tileh+' px';
+  }
+
+invader = invadera1;
+
+preAllocateInvadersStartPos( 1 );
+
+    //var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+    //window.requestAnimationFrame = requestAnimationFrame;
+    
+    
+    var requestAnimationFrame =  window.requestAnimationFrame ||
+              window.webkitRequestAnimationFrame ||
+              window.mozRequestAnimationFrame    ||
+              window.oRequestAnimationFrame      ||
+              window.msRequestAnimationFrame     ||
+              function(callback) {
+                  window.setTimeout(callback, 10);
+               };
+ window.requestAnimationFrame=requestAnimationFrame;
+    
+    
+})();
+
+
+////////////////////////////////////////////////////////////////////// 
+//HOTKEYS//
+
+$(document).bind('keyup', 'z', function(event){
+	canMove =true; //sblocca jack
+	pressAgain=false; //reset
+	
+	if (andavaDestra){
+		jack = jack_static_r;
+		latest = jack_static_r;			
+	}
+	else{
+		jack = jack_static_l;
+		latest = jack_static_l;			
+	}
+});
+
+var pressAgain=false; //init
+
+$(document).bind('keydown', 'z', function(event){
+	// incremento barra
+	// verifica se il giocatore è nella posizione corretta
+    if (
+    	// player.x == width - 2*tilew /* dx */
+    	// || 
+    	player.x == tilew && !pressAgain /* sx */ ) 
+    {
+		pressAgain=true; //costringe a ripremere il bottone
+		
+    	//incremento barra
+		var progressbar = $( "#progressbar" ),
+		progressLabel = $( ".progress-label" );
+				
+		var val = progressbar.progressbar( "value" ) || 0;
+		var newvalue = 0;
+		var forza = 1;
+		if ( val<50 )
+			newvalue = ( val + forza );
+		else if ( val>=30 && val<45 )
+			newvalue = ( val + 0.15*forza );
+		else if ( val>=45 && val<65 )
+			newvalue = ( val + 0.35*forza );
+		else if ( val>=65 && val<85 )
+			newvalue = ( val + 0.60*forza );
+		else if ( val>=85 )
+			newvalue = ( val + 0.65*forza  );
+		
+		newvalue=Math.round(newvalue * 100) / 100;
+		progressbar.progressbar( "value", newvalue );
+	
+		//animazione cyclette
+		rotating = true;
+	    jack = jack_wl[ kk ];
+	    switch(kk){
+	    	case 0: sinistro1=sinistrodef; break;
+	    	case 1: sinistro1=sinistro2; break;
+	    	case 1: sinistro1=sinistro3; break;
+	    	case 1: sinistro1=sinistro4; break;	    	
+	    }
+	    kk = ( kk +1 ) %4; 
+	        	  
+	    var wherewhere;
+	    
+	    if ( player.x == tilew )  
+	    	wherewhere="sinistra";     
+	    	       
+	    $('#info').text( "file-frame "+wherewhere+" [ " + (kk+1) + " ] , width = "+width1+", height = "+height1 );
+	}
+});
+
+$(document).bind('keyup', '7', function(event){
+	if (paused) paused = false;
+	else paused =true;
+
+	var ctx = getCtx();
+	ctx.fillStyle = "black";
+  	ctx.drawImage( vaiadormire, width1/6, height1/2 );
+});
+
+
+
+//$(document).bind('keyup', '7', function(event){
+//});
+
+/////////////EXPERIMENTAL FUNCTIONS////////////
+function coofee_break( durata ){
+	for (var h=0; h<durata; h++) ;
+}
+
+/////////////RANDOMIC FUNCTIONS/////////////
+var tmp;
+
+function distributedX( seedx ){
+	var rand = Math.random()*tilew;
+	var dist_min = invaderW + rand;
+	var res1 = seedx - dist_min;
+	var res2 = seedx + dist_min;
+	
+	while ( res1<left_limit )
+	{
+		rand = Math.random()*tilew;
+		dist_min = invaderW + rand;
+		res1 = seedx - dist_min;
+	}
+	
+	return res1;
+}
+
+function randomX2( k ){
+	k = k%left_limit;
+	var s = Math.floor( (Math.random()*right_limit) + left_limit );		
+	return s;
+}
+
+
+function randomX( ){
+	var s = Math.floor( (Math.random()*right_limit) + left_limit );		
+	return s;
+}
+function randomY( ){
+	return Math.floor( (Math.random()*top_limit) + bottom_limit );
+}
+function midProb() {return randomX () %2 == 0 ;}
+function threeProb() {return randomX () %3 == 0 ;}
+function sevenProb() {return randomX () %7 == 0 ;}
+function lowProb() {return randomX () %12 == 0 ;}
+
+var turn=0;
+function getRandomKind(){
+	if (turn==0)
+		return invadera1;
+	else if (turn==1)
+		return invaderb1;
+	else 
+		return invaderc1;
+	
+	turn=(turn+1)%3;
+}
+
+/////////////MAIN FUNCTIONS/////////////
+var iii=0;
+
+function getTrajectory() {
+  var angle = 0.1 * iii;
+  var x=(1+angle)*Math.cos(angle);
+  var y=(1+angle)*Math.sin(angle);
+
+  iii = (iii+1)%720;
+
+  return [x,y];
+};
+
+var acc = 7/100;
+var delta = acc/100;
+var theStep =0;
+var bottom = false;
+var velvel=2;
+
+function respawn(){	
+	if (tregua) return;
+	
+	for ( var j=0; j<vivo.length; j++ )
+		if ( vivo[j] ) 
+			return;
+	
+	//se arriva qui, non ci sono invaders attivi
+	//pausaCaffe();
+	setInterval(pausaCaffe(),1500);
+	//start(); //start countdown
+	
+	var nuoviInvaders = 1 + Math.floor( Math.random()*5);
+	preAllocateInvadersStartPos( nuoviInvaders );
+}
+
+//countdown
+var clock = 10;
+var countdownId = 0;
+var tregua= false;
+
+function start() {
+	//Start clock
+    countdownId = setInterval("countdown()", 100);
+}
+
+function countdown(){
+            if(clock > 0){
+            	tregua=true;
+            	
+                clock = clock - 1;
+                
+                ctx.fillStyle = "white";
+  				ctx.font = "bold 20px Arial";
+  				ctx.fillText( " - "+clock+" ", width1/2, height1/2 );
+
+            }
+            else {
+                //Stop clock
+                clearInterval(countdownId);
+                clock = 10; 
+                countdownId = 0;          	
+                tregua = false; 
+            }
+}
+
+function pausaCaffe(){
+	//do nothing
+}
+
+var rip = 0;
+var max = 1000;
+var r= width1/4;
+var theta = 45;
+
+function moveDown( curr_x, curr_y ){
+	var res = new Array(2);
+	
+//accelerazione casuale
+	vel_x = (Math.random()*acc) ;
+	if ( acc >2 ){
+		//non farlo andare troppo veloce
+		acc =2; //velocita umana, final
+	}			
+	
+	if ( sevenProb )
+		acc = acc + delta;
+	else
+		acc = acc - 2*delta;
+		
+	//riduci velocità
+	var factor = 0.003;
+	//if (generateNewY( ) % 13==0)
+		//scende diritto
+		res[0] = curr_x; 		
+	//else
+		//scende muovendosi
+	//	res[0] = generateNewX( ) ; 
+		
+	res[1] = (curr_y + vel_x)%bottom_limit;
+	
+	//limiti schermo, normalizza
+	//res[0] = res[0] % right_limit;
+	//res[0] = res[0] % left_limit;
+	//res[1] = res[1] % bottom_limit;
+	//res[1] = res[1] % top_limit;
+		
+	//check danno
+	var soglia = height - tileh;
+	if ( res[1] >= soglia ){
+		var progressbar = $( "#progressbar" ),
+		progressLabel = $( ".progress-label" );
+	
+		var val = progressbar.progressbar( "value" ) || 0;
+		var newvalue = ( val - forzavirus );
+			newvalue=Math.round(newvalue * 100) / 100;
+	
+		progressbar.progressbar( "value", newvalue );
+	}
+	
+	return res;
+}
+
+
+var radius = 12;
+var stepstep= 1/10;
+var canMove = true;
+function fire( ctx, px, py ){			        
+      //mostra jack mentre spara...
+      
+      //if ( latest==jack_static_r ) 
+      if ( andavaDestra )
+      	{
+    		latest = jack_fireR;
+      		jack = jack_fireR;
+	    }
+      else 
+      	{
+      		latest = jack_fireL;
+      		jack = jack_fireL;
+      	}
+      
+      //ctx.fillStyle="green";
+      //ctx.clearRect( player.x, player.y, tilew, tileh );
+	  //ctx.drawImage( jack_fireL, player.x, player.y );
+      
+      //... non può muoversi
+      canMove= false;
+      
+      var tmptmp=5;
+      
+	  ctx.beginPath();
+      ctx.rect( px-8, tileh, 2, py );
+      ctx.rect( px+8, tileh, 2, py );
+      //ctx.fillStyle = '#04FB14';
+      //ctx.fill();
+      ctx.lineWidth = 3;
+      ctx.strokeStyle = '#04FB14';
+      ctx.stroke();    
+}
+
+/*
+function lanciaPalla( ctx, px ){
+	//init
+	step = 0.5*2;
+	
+	//pallina		
+	for ( var yy=tileh; yy<height1/step; yy+=step ){
+		ctx.clearRect( px, yy, 300,300 );
+		ctx.beginPath();
+	    ctx.fillStyle="#CC0000";
+	    ctx.arc( px, yy, 20,0,Math.PI*2,true); 
+	    ctx.closePath();
+	    ctx.fill();		
+	}
+
+}*/
+
+function explode( inv_x, inv_y, index, sprite ){	
+	//explosion, punti e reset invader
+
+	//non posso sparare due volte allo stesso
+	if ( !vivo[ index ] ) return;
+	
+	var colors = [
+	/**"#525252",
+	"#04FB14",
+	"#C0C0C0",
+	"#CCC000",
+	"#112233",
+	"#5E5E5E",
+	"#2A2A2A",
+	"#1B12B2"**/
+	
+	"#00FE52",
+	"#FFFFFF",
+	"#00D04C"
+	]
+	
+	var random = Math.floor(Math.random()*boom.length);
+	boom[random].play();
+	
+	var t1 =Math.floor( Math.random()*colors.length );
+	var t2 =Math.floor( Math.random()*colors.length );
+	
+	createExplosion(inv_x, inv_y, colors[t1]);
+	createExplosion(inv_x, inv_y, colors[t2]);
+	
+	//punti
+	var newpoints = parseInt( $('#points').text() )+1;
+	$('#points').text( newpoints );
+	
+	//distruggi invader
+	var ctx = getCtx();		
+	//ctx.clearRect ( inv_x , inv_y , invaderW, invaderH );	
+	vivo[ index ] = false; //morto
+}		
+
+var animInvader=1;
+var totalDuration=5000;
+var duration=1000;
+var current = "notset";
+
+function animProb(){
+	var x = randomX();
+	return ( x<10 || x>100 );
+}
+
+var alternateBeep=false;
+function invaderAnimate ( index ){
+	return;
+	
+//	$("#info").text ("invader current = "+current.width);
+if ( current == "notset" ) 
+	current = invader;
+
+	//gestione animazione
+	if ( 
+		vivo[index] && lowProb()
+	   ){	
+	   	
+	   	if (alternateBeep) {
+	   		//beep.play();
+	   		alternateBeep=false;
+	   	} 
+	   	else{
+	   		//beep2.play();
+	   		alternateBeep=true;
+	   	} 
+	   		
+	   	//switch image...	
+		if ( invader == invadera1 ) invader = invadera2;
+		else if ( invader == invadera2 ) invader = invadera1;
+		
+		else if ( invader == invaderb1 ) invader = invaderb2;
+		else if ( invader == invaderb2 ) invader = invaderb1;
+		
+		else if ( invader == invaderc1 ) invader = invaderc2;
+		else if ( invader == invaderc2 ) invader = invaderc1;
+		
+		//... and force refresh
+		var ctx = getCtx();
+		ctx.drawImage( invader, curx[index], cury[index] );
+		ctx.stroke();
+	}
+	else 
+		animInvader = (animInvader +1)%totalDuration;
+	
+	setInterval(pausaCaffe(),1000);	
+}
+
+function invaderMove(){	
+	for ( var r=0; r<quantiInvader; r++ ){	
+		
+		//"destroy" all invaders, if necessary...
+		if (finished) return;
+			
+		//invaderAnimate(r);
+			
+		var ctx = getCtx();
+		ctx.rect( width1, height1, invaderW, invaderH );
+		if ( vivo[r] ){
+			//move
+			var p = moveDown( curx[r], cury[r] );
+	
+			//update current position
+			curx[r] = p[0];
+			cury[r] = p[1];
+		}
+		else 
+			{
+			//destroy	
+				//ctx.fillStyle = '#000000';
+	       		//ctx.fillRect(curx[r],cury[r],invaderW,invaderW);
+	       		//ctx.clearRect(curx[r],cury[r],invaderW,invaderW);
+	       		
+	       		//cross
+	       		var diagonale = Math.sqrt( invaderW*invaderW + invaderH*invaderH);
+	       		ctx.beginPath();
+				ctx.moveTo( curx[r],cury[r] );
+				ctx.lineTo( curx[r]+invaderW,cury[r]+invaderH );
+				//ctx.moveTo( curx[r]+invaderW,cury[r] );
+				//ctx.lineTo( curx[r],cury[r]+invaderH );
+				ctx.lineWidth = diagonale;
+				ctx.strokeStyle = '#000000';
+				
+				
+			}
+					
+		ctx.drawImage( invaders_type[r], curx[r], cury[r] );
+		ctx.stroke();
+		
+		//check collision
+		//var alpha = 0.3;
+		//var lLimit= player.x-alpha*tilew;
+		//var rLimit= player.x+alpha*tilew;
+		
+		var beta = 0.85*tilew;
+		
+		var max = height1-1.2*tileh;
+		var rightDistance = ( cury[r]>=max );
+		var distance = player.x-curx[r];
+		if (distance<0) distance=-distance;
+		
+		var collidedWithJack = rightDistance && (distance <= beta);
+	 	
+	 	if ( collidedWithJack )
+			gameOver=true;
+	}
+}
+
+function invadersControl( ){
+	//alert("quantiInvader="+quantiInvader);
+	
+	for ( var r=0; r<quantiInvader; r++ ){
+		if ( stop[r] ) {
+			//do nothing
+			//curr_x = where_x; //init
+		}
+		else {
+			
+			//multiple
+			//where_x = curx[r];
+			//invader = invaders_type[r];
+			
+			//alert ( "pos_x["+r+"]="+where_x );
+
+			//mono
+			invaderMove ( curx[r], invader );		
+
+			$('#console').text("UFO_"+r+" ("+curx[r]+","+cury[r]+") ");
+		}		
+	}
+}
+
+function getCtx(){
+	var canvas = document.getElementById("canvas");
+	var ctx = canvas.getContext("2d");
+	return ctx;
+}
+
+var finished =false;
+var andavaDestra = false; //iniz. jack rivolto a sinistra
+
+function playerControl(){
+	
+	//default, posizione giocatore
+	var jack = latest; 
+
+	//bordi laterali schermo
+ 	var bordosx = 0;
+ 	var bordodx = width - player.width;
+	
+	if ( gameOver==true ){
+		//alert("GAME OVER: CLICCA per giocare di nuovo");
+		//window.location.reload();
+		
+		//stoppa musica
+		SC.stream("/tracks/137934433", function(sound){
+  			soundManager.stopAll();
+		});
+		
+		gameaudio.play();
+		
+		var ctx = getCtx();
+	  	
+	  	ctx.fillStyle = "black";
+  		ctx.drawImage( gameover, width1/2, height1/2 );
+  		
+		return;
+	}
+	
+   if ( player.x <= (bordodx - tilew) 
+   		&& player.x > tilew
+   && ( /*keys[38] ||*/ keys[90] ) ) {
+// 	  up arrow or 'z'	  	
+	  // frusta
+	  if ( keys[90] ){
+	  	bip4.play();
+	  	max = lunghezzaFrusta;
+	  	flag=true;
+		fire( getCtx(), player.x + tilew/2, height1-2*tileh );
+		
+	  //patch
+	  for ( var j=0; j<quantiInvader; j++ ) {		  		
+		  // check collision
+		  var a = curx[j] / 2 - tilex;
+		  var b = cury[j] / 2 + tilex;
+		      
+		  if  ( 
+		    	cury[j] <= height1-tileh && 
+		    	player.x >= curx[j] - tilew/2 &&
+		    	player.x <= curx[j] + tilew/2
+		    	)    
+		  {
+		      	explode( curx[j], cury[j], j, invaders_type[j] );     			
+		  }
+	  }
+	  	
+	  }	
+	  else{
+	  	var whip_width = tilew;
+	  	var whip_height = tileh/10;
+	  	
+	  	var ctx = getCtx();
+	  	
+	  	ctx.fillStyle = "black";
+	  	ctx.beginPath();
+	  	ctx.clearRect(player.x, player.y, tilew, tileh);
+  		//ctx.fillRect(player.x, player.y + tileh, tilew, 2*tileh);
+  		ctx.drawImage( jack, player.x, player.y );
+	  }
+   }
+    var moveme = 1.7;
+    var fulvio= 500;
+        	
+    if (canMove && keys[39]) {
+        // destra ---->
+        if (player.velX < player.speed) {  
+        	andavaDestra = true;
+        	          
+            player.velX+=moveme;
+ //         jack = jack_static_r;
+			latest=jack_static_r;
+
+			if ( Math.floor( (Math.random()*right_limit )) % 2 == 0 )
+				jack = jack_walkR[0]; 
+			else 
+				jack = jack_walkR[1];
+         }    
+    }    
+    if (canMove && keys[37]) {        
+        // sinistra <----   
+        if (player.velX > -player.speed) {
+        	andavaDestra = false;
+            player.velX-=moveme;
+//            jack = jack_static_l;
+            latest=jack_static_l;
+            
+			if ( Math.floor( (Math.random()*left_limit )) % 2 == 0 )
+				jack = jack_walkL[0]; 
+			else 
+				jack = jack_walkL[1];
+        } 
+    }
+ 
+    player.velX *= friction;
+    player.velY += gravity;
+    player.x += velocitaX * player.velX;
+    player.y += player.velY;
+  	
+ 	bordodx -= tilew;
+ 	bordosx += tilew;
+ 	
+    if ( player.x >= bordodx )
+        player.x = bordodx;
+    else if ( player.x <= bordosx )        
+        player.x = bordosx;    
+    
+ 	//bordi schermo
+  
+	var cyclette=false;
+
+  	//trasforma tile in cyclette se arrivi al bordo sx
+    if (player.x == bordosx){
+    	jack = jack_wl[0]; //default
+    	cyclette= true;
+    	
+    	if ( rotating == true )
+    		jack = jack_wl[kk];    		
+    }
+    else 
+    	cyclette=false;
+
+  
+    if (player.y >= height-player.height) {
+       player.y = height - player.height;
+       player.jumping = false;
+    }
+    
+    
+  
+  //update del disegno 
+  var ctx = getCtx();
+    	
+  //ctx.fillStyle = "white";
+    
+  //ctx.fillRect(player.x, player.y, player.width, player.height);
+  
+  if ( cyclette ){
+  		// crop 2 single tiles
+  		// 21 22
+  		  
+  		//misure vecchie                		
+		//ctx.drawImage( jack, 0, 50, 125, 175, tilew/2, 7*tileh, 125, 125);
+		
+		ctx.drawImage( jack, 0, 7*tileh ); 
+		
+		//  ctx.drawImage( jack, player.x, player.y ); 
+  }
+  else
+	  ctx.drawImage( jack, player.x, player.y );  
+
+
+if ( !paused ) {
+  requestAnimationFrame( disegnaFondale );
+  requestAnimationFrame( invadersControl );
+  requestAnimationFrame( createInvader );  
+  requestAnimationFrame( playerControl ); 
+  
+  
+      var progressbar123 = $( "#progressbar" ),
+	progressLabel123 = $( ".progress-label" );
+    if ( progressbar123.progressbar("value")<=15 ) 
+    	baloonDraw("PEDALA!");
+
+	//baloonDraw("HAI VOLUTO LA BICICLETTA E MMO PEDALA");
+  
+  if (finished) 
+  	return;
+  else 
+	  requestAnimationFrame( respawn ); 
+	  
+	 } 
+}
+
+
+
+function sleep(milliseconds) {
+  var start = new Date().getTime();
+  for (var i = 0; i < 1e7; i++) {
+    if ((new Date().getTime() - start) > milliseconds){
+      break;
+    }
+  }
+}
+
+
+
+function createInvader() {
+}
+
+//invaders manage
+function basicInvader() {
+	var startx = width1/2, starty=height1/2;
+
+    var that = this;
+    that.step = 0; 
+    that.bottom = false;
+    that.vel = 2;
+    that.pos = [startx, starty];
+    
+    var canvas = document.getElementById('canvas');
+ 	var ctx = canvas.getContext('2d'); 
+    
+    that.move = function() {
+        if (that.pos[1] >= height1/3) {that.bottom = true;}
+        if (!that.bottom) {
+        	//alien scende
+            that.pos[1] += that.vel;
+        }
+        else {
+        	//alien si muove
+            if (that.step < 20) {
+                that.pos[0] += that.vel;
+            }
+            else if (that.step < 40) {
+                that.pos[1] -= that.vel;
+            }
+            else if (that.step < 60) {
+                that.pos[0] -= that.vel;
+            }
+            else {
+                that.pos[1] += that.vel;
+            }
+            that.step = (that.step+1)%80;
+        }
+    }
+    that.draw = function() {
+        //ctx.fillStyle = "red";
+		//ctx.clearRect( 0, 0, width, height );
+        //ctx.rect(that.pos[0], that.pos[1], tilew/2, tileh/2);
+  		//ctx.fillRect(player.x, player.y, player.width, player.height);
+	  	//ctx.fill();
+ 
+        requestAnimationFrame(playerControl);
+    }
+};
+
+</script>
+  
+<!--google analytics da giorno 8 marzo 2014--> 
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-41580820-1', 'zedfumetto.it');
+  ga('send', 'pageview');
+
+</script> 
+  
+</body>
+</html>

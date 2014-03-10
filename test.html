@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+		Remove this if you use the .htaccess -->
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+		<title>/// ZED Invaders 2.0 ///</title>
+		
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<script src="hotkeys/jquery.hotkeys-0.7.9.min.js"></script>
+
+<style>
+	.ui-progressbar {
+		position: relative;
+	}
+	.progress-label {
+		position: absolute;
+		left: 50%;
+		top: 4px;
+		font-weight: bold;
+		text-shadow: 1px 1px 0 #fff;
+	}
+</style>
+
+<script>
+//variabili
+var factor = 4.5;
+var pussy = 3.2;
+var forzajack = ( pussy / factor );
+var forzavirus = ( factor * forzajack );
+var mseconds = 1000;
+var startvalue=30;
+
+//variabili grafiche
+var totalJackFrame = 10;
+var actualFrame =0;
+
+$(function() {
+	var progressbar = $( "#progressbar" ),
+	progressLabel = $( ".progress-label" );
+	
+	progressbar.progressbar({
+		value: false,
+		change: function() {
+			progressLabel.text( progressbar.progressbar( "value" ) + "%" );
+		},
+		complete: function() {
+			progressLabel.text( "HAI VINTO!" );
+		}
+	});
+	progressbar.progressbar( "value", startvalue );
+	
+	setInterval( decrease, mseconds);
+
+//hotkeys
+$(document).bind('keyup', 'z', function(event){
+	increase();
+	animateJack();
+});
+
+
+function animateJack(){
+	actualFrame++;	
+	actualFrame%=totalJackFrame;
+	$('#console').text("jack frame = "+(actualFrame+1));
+}
+
+function decrease(){
+	var val = progressbar.progressbar( "value" ) || 0;
+	if ( val>=20 )
+		forzavirus = Math.random() * 3;
+	else if ( val<20 )
+		forzavirus = 0.2 + 1.2 * Math.random();
+	
+	var newvalue = ( val - forzavirus );
+	newvalue = Math.round(newvalue * 100) / 100;
+	
+	if ( newvalue<=15 )
+		$('#console').html("PREMI Z !");
+	
+	if ( newvalue<=10 )
+		$('#console').html("PREMI Z PIU' VELOCEMENTE !");
+
+	if ( newvalue<=5 )
+		$('#console').html("SEI AL LIMITE, PREMI Z !");
+
+	if ( newvalue<=0 ) newvalue=0;
+	
+	progressbar.progressbar( "value", newvalue );
+}
+
+function increase() {
+	var val = progressbar.progressbar( "value" ) || 0;
+	var newvalue = (val + forzajack);
+		newvalue=Math.round(newvalue * 100) / 100;
+
+	progressbar.progressbar( "value", newvalue );
+}
+
+});
+
+
+
+
+</script>  
+
+
+
+		<meta name="description" content="">
+		<meta name="author" content="Sal">
+
+		<meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+		<!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
+		<link rel="shortcut icon" href="/favicon.ico">
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+	</head>
+
+	<body>
+		<div>
+			<div>
+
+			<div id="manovella"></div>
+
+			<div id="progressbar"><div class="progress-label">Attendere...</div></div>
+
+			<div id="console"></div>
+
+			</div>
+
+			<footer>
+				<p>
+					&copy; By ZED
+				</p>
+			</footer>
+		</div>
+	</body>
+</html>

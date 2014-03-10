@@ -1,0 +1,122 @@
+/**schermata iniziale**/
+
+#close_box{ 
+	float: right; cursor: pointer; 
+}
+
+.share_box{
+	position:fixed;
+	width:160px;
+	top:6%;
+	left:6%;
+	border:3px solid #a1a1a1;
+	background:#FFF;
+	padding:10px;
+	-webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+	
+#progressbar{	
+	background-color: #000000 !important;
+	border-color: #000000 !important;		
+}
+
+.progress-label{	
+	font-size: 36px;	
+	background-color: transparent !important;
+	text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+.ui-progressbar-value, .ui-widget-header, .ui-corner-left{
+	background-color: #04FB14 !important;
+}	
+	
+#bigcontainer{
+	min-height: 1108px !important;
+}	
+	
+.modal {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .8 ) 
+                url('http://i.stack.imgur.com/FhHRx.gif') 
+                50% 50% 
+                no-repeat;
+}
+
+/* When the body has the loading class, we turn
+   the scrollbar off with overflow:hidden */
+body.loading {
+    overflow: hidden;   
+}
+
+/* Anytime the body has the loading class, our
+   modal element will be visible */
+body.loading .modal {
+    display: block;
+}
+
+/**centra canvas**/
+	
+div#bigcontainer {
+    padding-left: 0;
+    padding-right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: 800px;
+}
+
+/** stile barra **/
+#info{font-size: 22px;}
+
+.ui-progressbar {
+	position: relative;
+}
+.progress-label {
+	position: absolute;
+	left: 50%;
+	top: 4px;
+	font-weight: bold;
+	text-shadow: 1px 1px 0 #fff;
+}
+
+
+#progressbar{
+	width: 762px;
+	margin-left: 65px;
+	margin-top: 26px;
+	height: 69px;
+}
+
+/** stile barra **/
+	
+.bubble
+{
+  position:relative;
+  background:green;
+  float:left;     /* because the image at left */
+}
+.bubbleborder
+{
+  position:absolute;
+  top:0;
+  left:0;
+}
+.bubbletext
+{
+  position:absolute;
+  top:0;
+  left:0;
+  width:200px;
+  height:170px;
+  padding:80px 16px 16px 16px;
+  text-align:center
+}
+	
