@@ -1,0 +1,39 @@
+{ "height":6,
+ "layers":[
+        {
+         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 36, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 36, 0, 0, 43, 0, 0, 0, 0, 0, 0, 15, 0, 0, 0, 0, 43, 0, 0, 43, 0, 0, 0, 0, 0, 15, 22, 15, 0, 0, 0, 43, 0, 0, 15, 15, 15, 15, 15, 15, 22, 22, 22, 15, 15, 15, 15, 0, 0, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 22, 0],
+         "height":6,
+         "name":"Tilelaag 1",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":15,
+         "x":0,
+         "y":0
+        }],
+ "orientation":"orthogonal",
+ "properties":
+    {
+
+    },
+ "tileheight":80,
+ "tilesets":[
+        {
+         "firstgid":1,
+         "image":"./web/levels/tiles.png",
+         "imageheight":640,
+         "imagewidth":560,
+         "margin":0,
+         "name":"Lemcraft",
+         "properties":
+            {
+
+            },
+         "spacing":0,
+         "tileheight":80,
+         "tilewidth":80
+        }],
+ "tilewidth":80,
+ "version":1,
+ "width":15
+}
