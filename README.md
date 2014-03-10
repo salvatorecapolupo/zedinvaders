@@ -1,8 +1,12 @@
 zedinvaders
 ===========
 
-This game is based over our original comic ZED, seen inside "zero-episode" called "Game Over".
+Open source HTML5 / JS entirely base browser game.
 
-You can play this clicking on the cabinet inside the story.
+This game is based on our original comic ZED, seen inside "zero-episode" called "Game Over".
+
+You can play this clicking on the cabinet inside the story:
+
+http://zedfumetto.it/2014/03/game-over-2.html
 
 For more infos please send an email to: zedfumetto@gmail.com
