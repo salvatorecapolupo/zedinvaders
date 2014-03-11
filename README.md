@@ -9,4 +9,4 @@ You can play this clicking on the cabinet inside the story:
 
 http://zedfumetto.it/2014/03/game-over-2.html
 
-For more infos please send an email to: zedfumetto@gmail.com
+Feel free to contribute, code-review our code, and/or contact us for any requests sending an email to: zedfumetto@gmail.com 
